@@ -1,0 +1,21 @@
+{
+    "name": "uinit",
+    "version": "0.1.0",
+    "description": "An initialization system for your UI modules",
+    "homepage": "http://gitorious.org/gitorious/uinit/",
+    "author": "Christian Johansen",
+    "main": "./lib/uinit",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/cjohansen/uinit.git"
+    },
+    "dependencies": {
+        "when": "~1.8",
+        "bane": "~0.2",
+        "cull": "~0.2",
+        "dome": "~0.1"
+    },
+    "devDependencies": {
+        "buster": "~0.6"
+    }
+}
