@@ -367,6 +367,8 @@ buster.testCase("Application", {
         this.app.env("data", 21);
 
         assert.calledTwice(feature);
+        assert.calledWith(feature, 42);
+        assert.calledWith(feature, 21);
     },
 
     "refreshing env var causes recursively depending modules to reload": function () {
