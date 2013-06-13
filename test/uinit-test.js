@@ -17,6 +17,21 @@ buster.testCase("Application", {
         assert.called(feature);
     },
 
+    "infers feature name from function": function () {
+        var fn = function myFeature() {};
+        var feature = this.app.feature(fn);
+
+        refute.isNull(this.app.features.myFeature);
+    },
+
+    "fails if no name and anonymous function": function () {
+        var app = this.app;
+
+        assert.exception(function () {
+            app.feature(function () {});
+        });
+    },
+
     "fails when adding feature with no action": function () {
         var app = this.app;
 
@@ -387,6 +402,21 @@ buster.testCase("Application", {
 
         assert.called(data);
         refute.called(feature);
+    },
+
+    "infers data name from function": function () {
+        var fn = function myFeature() {};
+        var feature = this.app.data(fn);
+
+        refute.isNull(this.app.features.myFeature);
+    },
+
+    "fails if no name and anonymous function": function () {
+        var app = this.app;
+
+        assert.exception(function () {
+            app.data(function () {});
+        });
     },
 
     "data can have dependencies as well": function () {
