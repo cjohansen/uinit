@@ -369,6 +369,15 @@ buster.testCase("Application", {
         assert.calledTwice(feature);
     },
 
+    "refreshing env var does not cause depending modules to load before app is loaded": function () {
+        var feature = this.spy();
+        this.app.feature("A", feature, { depends: ["data"] });
+        this.app.env("data", 42);
+        this.app.env("data", 21);
+
+        refute.called(feature);
+    },
+
     "refreshing env var does not cause unrelated modules to reload": function () {
         var feature = this.spy();
         this.app.feature("A", feature);
