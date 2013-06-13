@@ -369,6 +369,17 @@ buster.testCase("Application", {
         assert.calledTwice(feature);
     },
 
+    "refreshing env var causes recursively depending modules to reload": function () {
+        var feature = this.spy();
+        this.app.data("A", function () { return {}; }, { depends: ["data"] });
+        this.app.feature("B", feature, { depends: ["A"] });
+        this.app.env("data", 42);
+        this.app.load();
+        this.app.env("data", 21);
+
+        assert.calledTwice(feature);
+    },
+
     "refreshing env var does not cause depending modules to load before app is loaded": function () {
         var feature = this.spy();
         this.app.feature("A", feature, { depends: ["data"] });
