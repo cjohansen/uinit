@@ -330,11 +330,38 @@ buster.testCase("Application", {
         assert.exception(function () { app.feature("A", function () {}); });
     },
 
-    "throws exception when adding duplicate env var": function () {
+    "throws if writing env data to existing feature": function () {
         var app = this.app;
         app.feature("A", function () {});
 
         assert.exception(function () { app.env("A", 42); });
+    },
+
+    "does not throw when refreshing value of env var": function () {
+        var app = this.app;
+        app.env("A", 21);
+
+        refute.exception(function () { app.env("A", 42); });
+    },
+
+    "refreshing env var causes depending modules to reload": function () {
+        var feature = this.spy();
+        this.app.feature("A", feature, { depends: ["data"] });
+        this.app.env("data", 42);
+        this.app.load();
+        this.app.env("data", 21);
+
+        assert.calledTwice(feature);
+    },
+
+    "refreshing env var does not cause unrelated modules to reload": function () {
+        var feature = this.spy();
+        this.app.feature("A", feature);
+        this.app.env("data", 42);
+        this.app.load();
+        this.app.env("data", 21);
+
+        assert.calledOnce(feature);
     },
 
     "data registers lazy feature": function () {
