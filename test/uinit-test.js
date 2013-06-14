@@ -352,53 +352,76 @@ buster.testCase("Application", {
         assert.exception(function () { app.env("A", 42); });
     },
 
-    "does not throw when refreshing value of env var": function () {
-        var app = this.app;
-        app.env("A", 21);
+    "refreshing env vars": {
+        "does not throw": function () {
+            var app = this.app;
+            app.env("A", 21);
 
-        refute.exception(function () { app.env("A", 42); });
-    },
+            refute.exception(function () { app.env("A", 42); });
+        },
 
-    "refreshing env var causes depending modules to reload": function () {
-        var feature = this.spy();
-        this.app.feature("A", feature, { depends: ["data"] });
-        this.app.env("data", 42);
-        this.app.load();
-        this.app.env("data", 21);
+        "causes depending modules to reload": function () {
+            var feature = this.spy();
+            this.app.feature("A", feature, { depends: ["data"] });
+            this.app.env("data", 42);
+            this.app.load();
+            this.app.env("data", 21);
 
-        assert.calledTwice(feature);
-        assert.calledWith(feature, 42);
-        assert.calledWith(feature, 21);
-    },
+            assert.calledTwice(feature);
+            assert.calledWith(feature, 42);
+            assert.calledWith(feature, 21);
+        },
 
-    "refreshing env var causes recursively depending modules to reload": function () {
-        var feature = this.spy();
-        this.app.data("A", function () { return {}; }, { depends: ["data"] });
-        this.app.feature("B", feature, { depends: ["A"] });
-        this.app.env("data", 42);
-        this.app.load();
-        this.app.env("data", 21);
+        "does not cause reload when value does not change": function () {
+            var feature = this.spy();
+            this.app.feature("A", feature, { depends: ["data"] });
+            this.app.env("data", 42);
+            this.app.load();
+            this.app.env("data", 42);
 
-        assert.calledTwice(feature);
-    },
+            assert.calledOnce(feature);
+        },
 
-    "refreshing env var does not cause depending modules to load before app is loaded": function () {
-        var feature = this.spy();
-        this.app.feature("A", feature, { depends: ["data"] });
-        this.app.env("data", 42);
-        this.app.env("data", 21);
+        "causes recursively depending modules to reload": function () {
+            var feature = this.spy();
+            this.app.data("A", function () { return {}; }, { depends: ["data"] });
+            this.app.feature("B", feature, { depends: ["A"] });
+            this.app.env("data", 42);
+            this.app.load();
+            this.app.env("data", 21);
 
-        refute.called(feature);
-    },
+            assert.calledTwice(feature);
+        },
 
-    "refreshing env var does not cause unrelated modules to reload": function () {
-        var feature = this.spy();
-        this.app.feature("A", feature);
-        this.app.env("data", 42);
-        this.app.load();
-        this.app.env("data", 21);
+        "only recursively reloads modules whose dependencies changed result": function () {
+            var feature = this.spy();
+            this.app.data("A", function () { return "Same same"; }, { depends: ["data"] });
+            this.app.feature("B", feature, { depends: ["A"] });
+            this.app.env("data", 42);
+            this.app.load();
+            this.app.env("data", 21);
 
-        assert.calledOnce(feature);
+            assert.calledOnce(feature);
+        },
+
+        "does not cause depending modules to load before app is loaded": function () {
+            var feature = this.spy();
+            this.app.feature("A", feature, { depends: ["data"] });
+            this.app.env("data", 42);
+            this.app.env("data", 21);
+
+            refute.called(feature);
+        },
+
+        "does not cause unrelated modules to reload": function () {
+            var feature = this.spy();
+            this.app.feature("A", feature);
+            this.app.env("data", 42);
+            this.app.load();
+            this.app.env("data", 21);
+
+            assert.calledOnce(feature);
+        }
     },
 
     "data registers lazy feature": function () {
