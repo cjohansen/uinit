@@ -404,6 +404,22 @@ buster.testCase("Application", {
             assert.calledOnce(feature);
         },
 
+        "compares serialized arguments to decide to reload": function () {
+            var feature = this.spy();
+            this.app.data("A", function () { return {}; }, { depends: ["data"] });
+            this.app.feature("B", feature, {
+                depends: ["A"],
+                serializeArgs: function (obj) {
+                    return obj.toString();
+                }
+            });
+            this.app.env("data", 42);
+            this.app.load();
+            this.app.env("data", 21);
+
+            assert.calledOnce(feature);
+        },
+
         "does not cause depending modules to load before app is loaded": function () {
             var feature = this.spy();
             this.app.feature("A", feature, { depends: ["data"] });
