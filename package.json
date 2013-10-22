@@ -16,6 +16,6 @@
         "dome": "~0.1"
     },
     "devDependencies": {
-        "buster": "~0.6"
+        "buster": "~0.7"
     }
 }
