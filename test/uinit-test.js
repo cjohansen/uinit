@@ -1,4 +1,6 @@
 /*global uinit, cull, dome, when*/
+var assert = buster.assert;
+var refute = buster.refute;
 
 buster.testCase("Application", {
     setUp: function () {
@@ -451,6 +453,18 @@ buster.testCase("Application", {
         this.app.feature("A", feature, { depends: ["somedata"] });
         assert.calledOnce(data);
         assert.calledOnce(feature);
+    },
+
+    "data depending on data; should not cause any load": function () {
+        var data = this.stub().returns({});
+        var data2 = this.stub().returns({});
+        var feature = this.spy();
+        this.app.data("somedata", data);
+        this.app.data("someotherdata", data2, { depends: ["somedata"] });
+
+        this.app.load();
+        refute.called(data);
+        refute.called(data2);
     },
 
     "data registers non-nullable feature": function () {
