@@ -458,13 +458,26 @@ buster.testCase("Application", {
     "data depending on data; should not cause any load": function () {
         var data = this.stub().returns({});
         var data2 = this.stub().returns({});
-        var feature = this.spy();
         this.app.data("somedata", data);
         this.app.data("someotherdata", data2, { depends: ["somedata"] });
 
         this.app.load();
         refute.called(data);
         refute.called(data2);
+    },
+
+    "data depending on data; should be loaded when depended on by feature": function () {
+        var data = this.stub().returns({});
+        var data2 = this.stub().returns({});
+        var feature = this.spy();
+        this.app.data("somedata", data);
+        this.app.data("someotherdata", data2, { depends: ["somedata"] });
+        this.app.feature("a-feature", feature, { depends: ["someotherdata"] });
+
+        this.app.load();
+        assert.called(feature);
+        assert.called(data);
+        assert.called(data2);
     },
 
     "data registers non-nullable feature": function () {
