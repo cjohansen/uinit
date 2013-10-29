@@ -34,12 +34,13 @@ buster.testCase("Application", {
         });
     },
 
-    "fails when adding feature with no action": function () {
-        var app = this.app;
+    "emits error when adding feature with no action": function () {
+        var listener = this.spy();
+        this.app.on("error", listener);
 
-        assert.exception(function () {
-            app.feature("Feature", null);
-        });
+        this.app.feature("Feature", null);
+
+        assert.calledOnce(listener);
     },
 
     "calls feature once for only matching element": function () {
