@@ -155,6 +155,22 @@ buster.testCase("Application", {
         assert.calledWith(feature, "42");
     },
 
+    "scans context for env vars with filter": function () {
+        var feature = this.spy();
+        this.app.feature("Feature", feature, {
+            depends: ["question"]
+        });
+
+        var el = dome.el("span");
+        el.setAttribute("data-gts-question", "test");
+        var div = dome.el("div", [el]);
+
+        this.app.scanEnvAttrs(div, "data-gts-", function (value) { return value.toUpperCase(); });
+        this.app.load(this.root);
+
+        assert.calledWith(feature, "TEST");
+    },
+
     "runs feature with for each element with env var": function () {
         this.root.appendChild(dome.el("div", { className: "something" }));
         var feature = this.spy();
