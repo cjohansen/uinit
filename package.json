@@ -12,8 +12,8 @@
     "dependencies": {
         "when": "~1.8",
         "bane": "~0.2",
-        "cull": "~0.2",
-        "dome": "~0.1"
+        "culljs": "~0.3",
+        "dome": "~0.2"
     },
     "devDependencies": {
         "buster": "~0.7"
