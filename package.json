@@ -1,6 +1,6 @@
 {
     "name": "uinit",
-    "version": "0.3.0",
+    "version": "0.4.0",
     "description": "An initialization system for your UI modules",
     "homepage": "http://gitorious.org/gitorious/uinit/",
     "author": "Christian Johansen",
